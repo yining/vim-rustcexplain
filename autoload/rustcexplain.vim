@@ -1,20 +1,62 @@
-scriptencoding utf8
 
 function! rustcexplain#OpenExplainPopup(...) abort
   if a:0 > 0
-    let l:err_code = a:1
+    let l:errcode = a:1
   else
-    let l:err_code = rustcexplain#GuessErrCode()
+    let l:errcode = rustcexplain#GuessErrCode()
   endif
-  if l:err_code ==# v:false
+  if l:errcode ==# v:false
     echom 'RustcExplain: no error code found'
     return v:false
   endif
-  let l:rustc_cmd = rustcexplain#BuildRustcExplainCmd(l:err_code)
+  let l:cmd = rustcexplain#BuildRustcExplainCmd(l:errcode)
 
+  if has('nvim')
+    call rustcexplain#OpenNvimFloatWindow(l:cmd, l:errcode)
+  else
+    call rustcexplain#OpenPopupWindow(l:cmd, l:errcode)
+  endif
+endfunction
+
+function! rustcexplain#OpenNvimFloatWindow(rustc_cmd, err_code) abort
+  let l:message = systemlist(a:rustc_cmd)
+  let l:message = ['Explain [' . a:err_code .']', ''] + l:message
+  let l:message = map(l:message, {k, v -> ' ' . v . ' '})
+
+  let l:ui = nvim_list_uis()[0]
+  let l:max_line_length = max(map(copy(l:message), {k, v -> len(v)}))
+  let l:width = min([l:max_line_length, l:ui.width - 8])
+  let l:height = min([len(l:message), l:ui.height - 8])
+  let l:buf = nvim_create_buf(v:false, v:true)
+  let l:opts = {'relative': 'editor',
+        \ 'anchor': 'NW',
+        \ 'width': l:width,
+        \ 'height': l:height,
+        \ 'col': floor((l:ui.width - l:width) / 2),
+        \ 'row': floor((l:ui.height - l:height) / 2),
+        \ 'focusable': v:true,
+        \ 'style': 'minimal',
+        \ 'border': 'single',
+        \ 'noautocmd': v:true,
+        \ }
+  let l:winid = nvim_open_win(l:buf, 1, l:opts)
+  call nvim_win_set_option(l:winid, 'winhl', 'Normal:Cursorline')
+  call nvim_buf_set_var(l:buf, 'ale_enabled', 0)
+
+  call setbufvar(winbufnr(l:winid),  '&filetype',  'markdown')
+  call nvim_buf_set_lines(l:buf, 0, -1, v:true, l:message)
+
+  let l:closingKeys = ['<Esc>', 'q']
+  for l:key in l:closingKeys
+    call nvim_buf_set_keymap(l:buf, 'n', l:key, ':close<CR>',
+          \ {'silent': v:true, 'nowait': v:true, 'noremap': v:true})
+  endfor
+endfunction
+
+function! rustcexplain#OpenPopupWindow(rustc_cmd, err_code) abort
   let l:winid = popup_create(
-        \ systemlist(l:rustc_cmd),
-        \ { 'title': '  Explain [' . l:err_code . ']  ',
+        \ systemlist(a:rustc_cmd),
+        \ { 'title': '  Explain [' . a:err_code . ']  ',
         \  'close': 'button',
         \  'pos': 'center',
         \  'mapping': v:false,
@@ -65,7 +107,6 @@ endfunction
 
 function! rustcexplain#GuessErrCode() abort
   let l:errcode = rustcexplain#GetErrCodeFromCursorLine()
-  " echom 'error code is '. l:errcode
   if l:errcode != v:false
     return l:errcode
   endif
@@ -107,7 +148,10 @@ function! rustcexplain#GetErrCodeFromLocList() abort
 endfunction
 
 function! rustcexplain#BuildRustcExplainCmd(err_code) abort
-  let l:rustc_path = 'rustc'
-  let l:rustc_cmd = l:rustc_path . ' --explain ' . a:err_code
-  return l:rustc_cmd
+  let l:rustc_bin = get(g:, 'rsutcexplain_rustc_bin', 'rustc')
+  let l:rustc_options = get(g:, 'rustcexplain_rustc_options', '')
+  let l:cmd = l:rustc_bin .
+        \ ' ' . l:rustc_options .
+        \ ' --explain ' . a:err_code
+  return l:cmd
 endfunction

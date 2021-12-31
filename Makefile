@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
 
 .PHONY: default
-default: test lint
+default: test lint lint_github_action
 
 # TODO: integration with github action
 .PHONY: test
@@ -29,3 +29,7 @@ lint:
 		echo 'vint not found, exit.' >&2; exit 1
 	fi
 	vint .
+
+.PHONY: lint_github_action
+lint_github_action:
+	actionlint -verbose -color

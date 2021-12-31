@@ -4,6 +4,18 @@ Rust compiler provides very helpful information, make it even easier to get the 
 
 While editing Rust source code in `Vim`, LSP client or linter emits diagnostic messages and populates them in location list.
 
+```vim
+augroup rustcexplain
+  autocmd!
+  autocmd Filetype qf
+        \ nmap <silent> <buffer> <leader>E <CR><Plug>(rustcexplain_open)
+  autocmd Filetype rust
+        \ nmap <silent> <buffer> <leader>E <Plug>(rustcexplain_open)
+augroup END
+```
+
+Note the preceeding `<CR>` in autocmd for `Filetype qf`. It is there because moving cursor up or down does not select the line, `<CR>` does.
+
 - When focus in location list
     - `<leader>E` will jump to the line and show `rustc --explain` text of the cursorline
     - `<Enter>` will jump to the line (focus in the code window), see blow
@@ -18,7 +30,7 @@ Just want to know the explanation of an error code? In command mode, enter `Rust
 
 ## Depedency
 
-- requires `Vim` version >= 8.2 for [popup window](https://vimhelp.org/popup.txt.html )
+- [popup window](https://vimhelp.org/popup.txt.html ) is used to show `rustc --explain` content, so `Vim` version >= 8.2 with `+popupwin` enabled is required to use this plugin.
 - Development
     - themis and Vader for testing
 
@@ -30,8 +42,24 @@ Just want to know the explanation of an error code? In command mode, enter `Rust
 
 ## Configuration
 
-- PATH to `rustc`
-- `rustc` options e.g. `--edition`
-- shortcut key (default `<leader>E`)
+### `g:rustcexplain_rustc_bin`
+
+```vim
+let g:rustcexplain_rustc_bin = 'rustup run nightly rustc'
+```
+
+default is `rustc` assuming it is available from the `$PATH`
+
+### `g:rustcexplain_rustc_options`
+
+add extra options to the rustc command, not sure if at all useful.
+
+```vim
+let g:rustcexplain_rustc_options = '--edition 2015'
+```
+
+## Todo
+
 - shortcut key for move in the popup windwo and close the popup window
+
 
