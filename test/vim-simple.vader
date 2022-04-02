@@ -1,0 +1,44 @@
+" vim: set filetype=vader
+
+Before (each test):
+
+After (each test):
+
+Given rust (nothing):
+Do ( :RustcExplain foo ):
+  :RustcExplain foo\<CR>
+Execute (ensure no popup window appears):
+  let winids = popup_list()
+  AssertEqual [], winids
+
+Given rust (nothing):
+Do ( :RustcExplain without arg):
+  :RustcExplain\<CR>
+Execute (ensure no popup window appears):
+  let winids = popup_list()
+  AssertEqual [], winids
+
+Given rust (nothing):
+Do ( :RustcExplain 0308 ):
+  :RustcExplain 0308\<CR>
+Execute (ensure one popup window created):
+  let winids = popup_list()
+  AssertEqual 1, len(winids)
+Then (q to close popup):
+  q
+Execute (ensure popup window closed):
+  let winids = popup_list()
+  AssertEqual 0, len(winids)
+
+Given rust (nothing):
+Do ( :RustcExplain E0308 ):
+  :RustcExplain E0308\<CR>
+Execute (ensure no popup window appears):
+  let winids = popup_list()
+  AssertEqual 1, len(winids)
+Then (q to close popup):
+  q
+Execute (ensure popup window closed):
+  let winids = popup_list()
+  AssertEqual 0, len(winids)
+

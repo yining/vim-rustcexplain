@@ -10,17 +10,22 @@ MAKEFLAGS += --no-builtin-rules
 .PHONY: default
 default: test lint lint_github_action
 
-# TODO: integration with github action
 .PHONY: test
 test:
-	if ls test/*.vader; then
-		./test/run_vader.sh
+	if [ -n "$$(find test -type f -name 'vim-*.vader')" ]; then
+	 	vim -E -s -N -U NONE -u test/vader.vimrc -c 'Vader! test/**/vim-*.vader'
 	fi
-	if ! hash themis; then
-		echo 'themis not found, exit.' >&2; exit 1
+	if [ -n "$$(find test -type f -name '*.vim')" ]; then
+		THEMIS_VIM=vim themis --recursive --reporter tap
 	fi
-	if ls test/*.vim; then
-		themis --recursive --reporter tap
+
+.PHONY: test-nvim
+test-nvim:
+	if [ -n "$$(find test -type f -name 'nvim-*.vader')" ]; then
+	 	nvim -E -s -U NONE -u test/vader.vimrc -c 'Vader! test/**/nvim-*.vader'
+	fi
+	if [ -n "$$(find test -type f -name '*.vim')" ]; then
+		THEMIS_VIM=nvim themis --recursive --reporter tap
 	fi
 
 .PHONY: lint
@@ -30,6 +35,9 @@ lint:
 	fi
 	vint .
 
-.PHONY: lint_github_action
+.PHONY: lint_github_actions
 lint_github_action:
 	actionlint -verbose -color
+
+.PHONY: all
+all: test test-nvim lint lint_github_actions

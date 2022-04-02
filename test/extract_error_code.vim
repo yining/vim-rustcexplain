@@ -27,3 +27,17 @@ function! s:suite.ale_output()
   let l:expected = 'E0507'
   call s:assert.equals(l:got, l:expected)
 endfunction
+
+function! s:suite.string_not_contains_errcode()
+  let l:tests = [
+        \ '',
+        \ 'e0123',
+        \ 'rustc:Error:0432:unresolved import `super::List` no `List` in `first`',
+        \ "[analyzer] consider borrowing the `Result`'s content: `.as_ref()` [0507]"
+        \ ]
+  for l:t in l:tests
+    let l:got = rustcexplain#GetErrCodeFromString(l:t)
+    let l:expected = 0
+    call s:assert.equals(l:got, l:expected)
+  endfor
+endfunction
