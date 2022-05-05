@@ -51,7 +51,7 @@ This is a regular `Vim` plugin, install with your choice of plugin manager as yo
 - `Vim`: [popup window](https://vimhelp.org/popup.txt.html) is used, so `Vim` of version >= `8.2` with `+popupwin` enabled is required.
 - `Neovim`: version >= `0.6.0` should work.
 - Development
-    - themis and Vader for testing
+    - [vader.vim](https://github.com/junegunn/vader.vim) and [vim-themis](https://github.com/thinca/vim-themis/blob/master/doc/themis.txt )
 
 ## Known Limitation/Issues
 
@@ -104,10 +104,11 @@ This setting is for `Vim` only. I have not been able to find information on such
 
 ## Todo
 
+- [ ] add test with `coc.vim`
 - [ ] more test cases
 
 ## Acknowledgement
 
 - [rustc](https://doc.rust-lang.org/rustc/) for friendly and useful compiler messages
-- [vader.vim](https://github.com/junegunn/vader.vim) and [vim-themis](https://github.com/thinca/vim-themis/blob/master/doc/themis.txt ) for writing tests for `Vim` plugins.
-- [rhysd/action-setup-vim](https://github.com/rhysd/action-setup-vim) for GitHub Action to setup Vim or Neovim.
+- [vader.vim](https://github.com/junegunn/vader.vim) and [vim-themis](https://github.com/thinca/vim-themis/blob/master/doc/themis.txt ) for ease of writing tests for `Vim` plugins.
+- [rhysd/action-setup-vim](https://github.com/rhysd/action-setup-vim) for GitHub Action to setup `Vim`/`Neovim`.

@@ -11,15 +11,20 @@ jobs:
         rust_profile: [minimal]
         rust_channel: [stable]
         neovim: [false, true]
-        version: [v8.2.3140, nightly, stable]
+        version: [v8.2.3140, stable, nightly, v0.6.0]
         exclude:
+          # pin to support Vim >= v8.2.* (3140 is arbitrary, when is popup_list() released?)
+          # try to support nvim >= 0.6.0 and neovim nightly is unstable
           # vim stable is still v8.1.*, and neovim nightly is quite unstable
           - neovim: true
             version: nightly
           - neovim: true
             version: v8.2.3140
           - neovim: false
+            version: v0.6.0
+          - neovim: false
             version: stable
+
     runs-on: ${{ matrix.os }}
 
     steps:

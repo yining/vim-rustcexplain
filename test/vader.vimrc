@@ -6,10 +6,18 @@ set noswapfile
 "
 " Get an isolated Vim environment, with only Vader and the plugin to test.
 
+let s:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
+
 set packpath=
 " set runtimepath=
 set runtimepath+=~/.vim/bundle/vader.vim
-let &runtimepath .= ','.expand('<sfile>:p:h:h')
+execute 'set runtimepath+=' . s:repo_root
+execute 'set runtimepath+=' . s:repo_root . '/after'
+
+if $VADER_PROFILE !=# ''
+  execute	'profile' 'start' $VADER_PROFILE
+  execute 'profile! file ' . s:repo_root . '/*'
+endif
 
 filetype on
 filetype plugin on

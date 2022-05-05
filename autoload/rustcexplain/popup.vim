@@ -30,7 +30,7 @@ function! rustcexplain#popup#OpenNeovimFloatWindow(rustc_cmd, err_code) abort
 
   let l:uis = nvim_list_uis()
   if len(l:uis) > 0
-    let l:ui = l:uis()[0]
+    let l:ui = l:uis[0]
   else
     " NOTE: this is more for accomodating neovim in vader test than a practice
     "       of defensive programming. Without this, vader test with neovim will
