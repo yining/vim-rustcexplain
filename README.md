@@ -104,6 +104,8 @@ This setting is for `Vim` only. I have not been able to find information on such
 
 ## Todo
 
+- [ ] allow customize parsing the error code
+- document `g:ale_echo_msg_format`
 - [ ] add test with `coc.vim`
 - [ ] more test cases
 

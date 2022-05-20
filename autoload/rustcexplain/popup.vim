@@ -12,6 +12,8 @@ function! rustcexplain#popup#OpenPopupWindow(rustc_cmd, err_code) abort
         \  'filter': funcref('s:popup_filter'),
         \  'filtermode': 'n',
         \  'border': [1,1,1,1],
+        \  'borderhighlight': [],
+        \  'borderchars': g:rustcexplain_borderchars,
         \  'padding': [1,1,1,1],
         \  'maxheight': &lines - 10,
         \  'maxwidth': &columns - 10,

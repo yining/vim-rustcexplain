@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 if exists('g:loaded_rustcexplain')
   finish
 endif
@@ -14,6 +16,9 @@ let g:rustcexplain_rustc_options = get(g:, 'rustcexplain_rustc_options', '')
 "
 let g:rustcexplain_rustc_bin = get(g:, 'rustcexplain_rustc_bin', 'rustc')
 let g:rustcexplain_rustc_options = get(g:, 'rustcexplain_rustc_options', '')
+
+let g:rustcexplain_borderchars = get(g:, 'rustcexplain_borderchars', [])
+      " \ ['-', '|', '-', '|', '┌', '┐', '┘', '└'])
 
 "
 " Define commands
