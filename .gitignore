@@ -1,8 +1,6 @@
 tmp/
 tags
 
-.envrc
-
 profile-*.txt
 
 # artifacts for using covimerage(and coverage.py) for vim test coverage

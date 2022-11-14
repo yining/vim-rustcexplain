@@ -1,18 +1,20 @@
+[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
+
 # README
 
 ## What
 
-To display `rustc --explain` output in a popup window.
+To view `rustc --explain` output in a popup window inside `Vim`.
 
 ## Why
 
-`rustc` provides detailed and helpful information, it will be nice to be able to access it without leaving `Vim`, and even better with only a key mapping.
+`rustc` provides detailed and helpful information, it will be nice to be able to access it without leaving `Vim`, and even better with only a key mapping at an error/diagnostic message entry.
 
 ## How
 
 In command mode, execute `:RustcExplain E0308`, or without `E` as `:RustcExplain 0433`, or even `:RustcExplain 433`, a popup/float window will appear with `rustc --explain` output in it.
 
-If linter/maker engine like [`ALE`](https://github.com/dense-analysis/ale), [`Neomake`](https://github.com/neomake/neomake), or `LSP` client like [`vim-lsp`](https://github.com/prabirshrestha/vim-lsp) is used, it can be easier. First, put the following snippet in the `Vim` config file (change the mapping to your liking, in this document, however, let's stick to `<leader>E`).
+It can be easier with a key mapping if linter/maker engine like [`ALE`](https://github.com/dense-analysis/ale), [`Neomake`](https://github.com/neomake/neomake), or `LSP` client like [`vim-lsp`](https://github.com/prabirshrestha/vim-lsp) is used. First, put the following snippet in the `Vim` config file to set the mapping, in this example `<leader>E`, to your liking.
 
 ```vim
 augroup rustcexplain
@@ -26,11 +28,11 @@ augroup END
 
 After diagnostic messages are populated in the location list, move to the line with error, and `<leader>E` will bring up the popup window.
 
+**Note:** the preceeding `<CR>` in the above `autocmd` for `Filetype qf` is to select the entry in the location list because moving cursor up or down does **not** select the line, `<CR>` does that.
+
 ## How in more detail
 
 Under the hood, what this plugin does is run the `rustc --explain` command and pipe the output from `stdout`/`stderr` and put it in a popup/float window.
-
-Note the preceeding `<CR>` in the above `autocmd` for `Filetype qf`: it is there because moving cursor up or down does **not** select the line, `<CR>` does.
 
 Some more details:
 
@@ -48,21 +50,23 @@ This is a regular `Vim` plugin, install with your choice of plugin manager as yo
 
 ## Depedency
 
-- `Vim`: [popup window](https://vimhelp.org/popup.txt.html) is used, so `Vim` of version >= `8.2` with `+popupwin` enabled is required.
-- `Neovim`: version >= `0.6.0` should work.
-- Development
-    - [vader.vim](https://github.com/junegunn/vader.vim) and [vim-themis](https://github.com/thinca/vim-themis/blob/master/doc/themis.txt )
+- `Vim`: [popup window](https://vimhelp.org/popup.txt.html) is used, so `Vim` of version `>= 8.2` with `+popupwin` enabled is required.
+- `Neovim`: version `>= 0.6.0` should work.
+- Development dependencies:
+    - [vader.vim](https://github.com/junegunn/vader.vim) and [vim-themis](https://github.com/thinca/vim-themis/blob/master/doc/themis.txt ) for unit test;
+    - [poetry](https://python-poetry.org/ ) for managing tools built with `Python`
+
 
 ## Known Limitation/Issues
 
 - only tested with `ALE`, `Neomake`, and `vim-lsp`;
-- only works on diagnostic message reported to `Vim` as `error`, warning or other levels are ignored;
+- only works on diagnostic message reported to `Vim` as `error`, other levels are ignored;
 
 ## Configuration
 
 ### `g:rustcexplain_rustc_bin`
 
-the `rustc` binary, for example:
+the `rustc` binary used to generate `--explain` output, for example:
 
 ```vim
 let g:rustcexplain_rustc_bin = 'rustup run nightly rustc'
@@ -100,14 +104,7 @@ let g:rustcexplain_keymaps = {
 
 [Vim's popup-filter](https://vimhelp.org/popup.txt.html#popup-filter) has detailed info (for example the issue on using `ESC`) on setting keys on popup window.
 
-This setting is for `Vim` only. I have not been able to find information on such customization for `Neovim`'s float window.
-
-## Todo
-
-- [ ] allow customize parsing the error code
-- document `g:ale_echo_msg_format`
-- [ ] add test with `coc.vim`
-- [ ] more test cases
+**Note:** This setting is for `Vim` only. I have not been able to find information on such customization for `Neovim`'s float window.
 
 ## Acknowledgement
 

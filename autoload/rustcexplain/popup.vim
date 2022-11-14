@@ -20,7 +20,6 @@ function! rustcexplain#popup#OpenPopupWindow(rustc_cmd, err_code) abort
         \  'drag': 1,
         \  'scrollbar': 1,
         \  'resize': 1})
-
   call setbufvar(winbufnr(l:winid),  '&filetype',  'markdown')
 endfunction
 
@@ -34,17 +33,18 @@ function! rustcexplain#popup#OpenNeovimFloatWindow(rustc_cmd, err_code) abort
   if len(l:uis) > 0
     let l:ui = l:uis[0]
   else
-    " NOTE: this is more for accomodating neovim in vader test than a practice
-    "       of defensive programming. Without this, vader test with neovim will
-    "       get an empty list from `nvim_list_uis`. the numbers here are
-    "       arbiturary, only to trick neovim into generate a window
+    " HACK: this is to cheat neovim when testing with vader.
+    "       Without this, vader test with neovim will get an empty list
+    "       from `nvim_list_uis`. the numbers here are arbiturary, the
+    "       purpose is to trick neovim into generating a window
     let l:ui = {'width': 320, 'height': 240}
   endif
   let l:max_line_length = max(map(copy(l:message), {k, v -> len(v)}))
-  let l:width = min([l:max_line_length, l:ui.width - 8])
-  let l:height = min([len(l:message), l:ui.height - 8])
+  let l:width = min([l:max_line_length, l:ui.width - 4])
+  let l:height = min([len(l:message), l:ui.height - 4])
   let l:buf = nvim_create_buf(v:false, v:true)
-  let l:opts = {'relative': 'editor',
+  let l:opts = {
+        \ 'relative': 'editor',
         \ 'anchor': 'NW',
         \ 'width': l:width,
         \ 'height': l:height,
@@ -103,7 +103,6 @@ function! s:popup_filter(winid, key) abort
     call win_execute(a:winid, l:cmd)
   endif
   return 1
-
 endfunction
 
 

@@ -7,20 +7,16 @@ function! health#rustcexplain#check() abort
 
   let l:rustc_bin = get(g:, 'rustcexplain_rustc_bin', 'rustc')
   call health#report_info('rustc is: ' . l:rustc_bin)
-  " NOTE: rustc --version exit with 0, unlike many other with non-zero
   let l:cmd = l:rustc_bin . ' --version'
   let l:output = systemlist(l:cmd)
   call health#report_info(join(l:output, "\n"))
 
-  let l:looks_good = v:shell_error ? 0 : 1
-
-  if l:looks_good
+  if v:shell_error == 0
     call health#report_ok('found required dependencies')
   else
     call health#report_error("cannot find '".l:rustc_bin . "'",
-          \ ['check if rust is installed'])
+          \ ['ensure rust is installed and rustc is available in $PATH or g:rustcexplain_rustc_bin is set'])
   endif
-
 endfunction
 
 

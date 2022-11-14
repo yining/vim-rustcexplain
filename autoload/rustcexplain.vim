@@ -86,7 +86,9 @@ endfunction
 
 
 function! rustcexplain#GetErrCodeFromString(s) abort
-  let l:matches = matchlist(a:s, '\vE(\d{4})')
+  let l:errcode_pattern = get(g:,
+        \ 'rustcexplain_errcode_pattern', '\vE(\d{4})')
+  let l:matches = matchlist(a:s, l:errcode_pattern)
   return len(l:matches) > 0 ? l:matches[1] : 0
 endfunction
 

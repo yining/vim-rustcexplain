@@ -1,13 +1,20 @@
 let s:repo_root = fnamemodify(expand('<sfile>'), ':h:h')
 
-call themis#option('exclude', 'test/README.md')
+" call themis#option('exclude', 'test/README.md')
+
+set packpath=
 
 execute 'set runtimepath+=' . s:repo_root
-execute 'set runtimepath+=' . s:repo_root . '/after'
+" execute 'set runtimepath+=' . s:repo_root . '/after'
 
 if $THEMIS_PROFILE !=# ''
   execute 'profile' 'start' $THEMIS_PROFILE
   execute 'profile! file ' . s:repo_root . '/*'
 endif
+
+filetype on
+filetype plugin on
+filetype indent on
+syntax enable
 
 " vim: set ft=vim:
