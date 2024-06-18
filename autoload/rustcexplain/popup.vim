@@ -3,8 +3,11 @@ set cpoptions&vim
 
 
 function! rustcexplain#popup#OpenPopupWindow(rustc_cmd, err_code) abort
+  let l:message = systemlist(a:rustc_cmd)
+  let l:message = s:mark_code_blocks_as_rust(l:message)
+
   let l:winid = popup_create(
-        \ systemlist(a:rustc_cmd),
+        \ l:message,
         \ { 'title': '  Explain [' . a:err_code . ']  ',
         \  'close': 'button',
         \  'pos': 'center',
@@ -26,8 +29,8 @@ endfunction
 
 function! rustcexplain#popup#OpenNeovimFloatWindow(rustc_cmd, err_code) abort
   let l:message = systemlist(a:rustc_cmd)
-  let l:message = ['Explain [' . a:err_code .']', ''] + l:message
-  let l:message = map(l:message, {k, v -> ' ' . v . ' '})
+  let l:message = ['# Explain [' . a:err_code .']', ''] + l:message
+  let l:message = s:mark_code_blocks_as_rust(l:message)
 
   let l:uis = nvim_list_uis()
   if len(l:uis) > 0
@@ -57,6 +60,7 @@ function! rustcexplain#popup#OpenNeovimFloatWindow(rustc_cmd, err_code) abort
         \ }
   let l:winid = nvim_open_win(l:buf, 1, l:opts)
   call nvim_win_set_option(l:winid, 'winhl', 'Normal:Cursorline')
+  call nvim_set_option_value('conceallevel', 2, {'win': l:winid, 'scope': 'local'})
   call nvim_buf_set_var(l:buf, 'ale_enabled', 0)
 
   call setbufvar(winbufnr(l:winid),  '&filetype',  'markdown')
@@ -69,6 +73,21 @@ function! rustcexplain#popup#OpenNeovimFloatWindow(rustc_cmd, err_code) abort
   endfor
 endfunction
 
+" to mark code blocks in `rustc --explain` as `rust` as requested in
+" https://github.com/yining/vim-rustcexplain/issues/2
+function! s:mark_code_blocks_as_rust(lines) abort
+  let l:lines = []
+  " only change the opening '```' to '```rust'
+  let l:opening_flag = v:true
+  for l:line in a:lines
+    if match(l:line, '^\s*```\s*$') >= 0
+      let l:line = l:opening_flag ? '```rust' : l:line
+      let l:opening_flag = !l:opening_flag
+    endif
+    let l:lines = l:lines + [l:line]
+  endfor
+  return l:lines
+endfunction
 
 " ref: https://github.com/prabirshrestha/vim-lsp/issues/975#issuecomment-751658462
 function! s:popup_filter(winid, key) abort
